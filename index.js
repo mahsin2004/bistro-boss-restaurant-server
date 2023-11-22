@@ -131,7 +131,8 @@ async function run() {
 
     app.post("/tokenClear", async (req, res) => {
       const user = req.body;
-      res.clearCookie("token").send({ success: true });
+      console.log('log out user', user)
+      res.clearCookie("token", {maxAge: 0, sameSite: 'none', secure: true}).send({ success: true });
     });
 
     app.post("/product", async (req, res) => {
