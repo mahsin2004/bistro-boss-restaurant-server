@@ -33,6 +33,7 @@ const verifyToken = (req, res, next) => {
       return res.status(401).send({ message: "unauthorized access" });
     }
     req.user = decoded;
+    console.log(decoded)
     next();
   });
 };
@@ -75,13 +76,8 @@ async function run() {
     });
 
     app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
-      try {
         const result = await userCollection.find().toArray();
         res.send(result);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).send({ message: "Internal Server Error" });
-      }
     });
 
     app.get("/users/admin/:email", verifyToken, async (req, res) => {
@@ -92,7 +88,6 @@ async function run() {
 
       const query = { email: email };
 
-      try {
         const user = await userCollection.findOne(query);
         let admin = false;
 
@@ -101,10 +96,6 @@ async function run() {
         }
 
         res.send({ admin });
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).send({ message: "Internal Server Error" });
-      }
     });
 
     app.get("/carts", async (req, res) => {
@@ -129,7 +120,7 @@ async function run() {
         .send({ success: true });
     });
 
-    app.post("/tokenClear", async (req, res) => {
+    app.post("/logout", async (req, res) => {
       const user = req.body;
       console.log('log out user', user)
       res.clearCookie("token", {maxAge: 0, sameSite: 'none', secure: true}).send({ success: true });
